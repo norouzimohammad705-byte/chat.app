@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>پیام‌رسان اختصاصی سازمان</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0e1621;
+            --panel-bg: #17212b;
+            --header-bg: #242f3d;
+            --primary: #107c41;
+            --primary-hover: #0b5c30;
+            --text-color: #ffffff;
+            --sub-text: #7f91a4;
+            --chat-bg: #0b1118;
+            --my-msg: #2b5278;
+            --other-msg: #182533;
+            --border-color: #2b394a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            background: var(--panel-bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        /* صفحه ورود */
+        .login-screen {
+            position: absolute;
+            inset: 0;
+            background: var(--panel-bg);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 28px;
+            text-align: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .brand-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(16, 124, 65, 0.15);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 36px;
+        }
+
+        .login-screen h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .login-screen p {
+            color: var(--sub-text);
+            font-size: 13px;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: #242f3d;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:active {
+            background: var(--primary-hover);
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 14px;
+            display: none;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        /* هدر پیام‌رسان */
+        .header {
+            padding: 14px 16px;
+            background: var(--header-bg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .header-info h4 {
+            font-size: 15px;
+        }
+
+        .header-info span {
+            font-size: 12px;
+            color: var(--sub-text);
+        }
+
+        /* چت باکس */
+        .chat-box {
+            flex: 1;
+            background: var(--chat-bg);
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            user-select: text;
+        }
+
+        .msg.sent {
+            background: var(--my-msg);
+            align-self: flex-start;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg.received {
+            background: var(--other-msg);
+            align-self: flex-end;
+            border-bottom-left-radius: 2px;
+        }
+
+        .msg .sender-name {
+            font-size: 11px;
+            color: #5288c1;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        /* بخش ارسال پیام */
+        .input-area {
+            padding: 12px;
+            background: var(--header-bg);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 22px;
+            border: none;
+            background: var(--panel-bg);
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .send-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- صفحه ورود اختصاصی -->
+        <div class="login-screen" id="loginScreen">
+            <div class="brand-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h2>ورود به سامانه اختصاصی</h2>
+            <p>جهت دریافت کد تایید، شماره موبایل ثبت شده خود را وارد کنید.</p>
+
+            <!-- مرحله اول: دریافت شماره -->
+            <div id="stepPhone" style="width: 100%;">
+                <div class="input-group">
+                    <input type="text" id="phoneInput" placeholder="09120000000" maxlength="11">
+                </div>
+                <button class="btn" onclick="sendOtp()">دریافت کد از پیام‌رسان بله</button>
+            </div>
+
+            <!-- مرحله دوم: ورود کد تایید -->
+            <div id="stepCode" style="width: 100%; display: none;">
+                <div class="input-group">
+                    <input type="text" id="codeInput" placeholder="کد ۶ رقمی را وارد کنید" maxlength="6">
+                </div>
+                <button class="btn" onclick="verifyOtp()">تایید و ورود</button>
+            </div>
+
+            <div class="error-msg" id="errorMsg"></div>
+        </div>
+
+        <!-- صفحه اصلی چت -->
+        <div class="header">
+            <div class="header-avatar">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="header-info">
+                <h4>گروه عمومی اعضا</h4>
+                <span id="currentUserText">در حال اتصال...</span>
+            </div>
+        </div>
+
+        <div class="chat-box" id="chatBox"></div>
+
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="پیام خود را بنویسید..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let currentUser = null;
+        let userPhone = '';
+
+        async function sendOtp() {
+            userPhone = document.getElementById('phoneInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.style.display = 'none';
+
+            if (!userPhone) {
+                showError('لطفا شماره موبایل را وارد کنید.');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: userPhone })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    document.getElementById('stepPhone').style.display = 'none';
+                    document.getElementById('stepCode').style.display = 'block';
+                } else {
+                    showError(data.message);
+                }
+            } catch (err) {
+                showError('خطا در اتصال به سرور!');
+            }
+        }
+
+        async function verifyOtp() {
+            const code = document.getElementById('codeInput').value.trim();
+            if (!code) {
+                showError('لطفا کد تایید را وارد کنید.');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: userPhone, code })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    currentUser = data.user;
+                    document.getElementById('loginScreen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loginScreen').style.display = 'none';
+                    }, 300);
+
+                    document.getElementById('currentUserText').innerText = `کاربر: ${currentUser.full_name}`;
+                    loadMessages();
+                    setInterval(loadMessages, 2500);
+                } else {
+                    showError(data.message);
+                }
+            } catch (err) {
+                showError('خطا در تایید کد!');
+            }
+        }
+
+        async function loadMessages() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(`${API_URL}/messages`);
+                const messages = await res.json();
+                
+                const chatBox = document.getElementById('chatBox');
+                chatBox.innerHTML = '';
+
+                messages.forEach(msg => {
+                    const isMyMsg = msg.sender_phone === currentUser.phone;
+                    const msgEl = document.createElement('div');
+                    msgEl.className = `msg ${isMyMsg ? 'sent' : 'received'}`;
+                    msgEl.innerHTML = `
+                        <div class="sender-name">${msg.full_name}</div>
+                        <div>${msg.message}</div>
+                    `;
+                    chatBox.appendChild(msgEl);
+                });
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message || !currentUser) return;
+
+            try {
+                await fetch(`${API_URL}/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sender_phone: currentUser.phone, message })
+                });
+                input.value = '';
+                loadMessages();
+            } catch (err) {
+                alert('خطا در ارسال پیام');
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function showError(msg) {
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.innerText = msg;
+            errorMsg.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
